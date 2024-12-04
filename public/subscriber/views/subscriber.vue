@@ -1,5 +1,12 @@
 <template>
   <div class="min-h-screen bg-gray-100 flex items-center justify-center p-2">
+    <div
+        v-if="isLoading"
+        class="fixed inset-0 flex items-center justify-center bg-gray-50 bg-opacity-50 backdrop-blur-sm">
+      <div class="animate-spin rounded-full h-12 w-12 border-t-4 border-orange-500"></div>
+      <p class="ml-4 font-medium" style="color: #FF4200">Chargement...</p>
+    </div>
+
     <div class="bg-gray-100 rounded-lg w-full max-w-md p-3 ">
       <div class="flex flex-wrap h-14 shadow-lg shadow-gray-600">
         <!-- Carte -->
@@ -101,10 +108,12 @@
           </div>
 
           <!-- Rest of the form remains the same -->
-          <div class="" hidden>
-            <input type="number" name="token" id="token" value="" v-model="token" disabled>
-            <input type="number" name="code" id="code" value="" v-model="code" disabled>
+          <div class="" >
+            <input type="number" name="decoder" id="decoder" value="" v-model="decoder" disabled>
+            <input type="number" name="merchant" id="merchant" value="" v-model="merchant" disabled>
           </div>
+
+          <span class="font-roboto text-black">{{shortlink}} bonjour</span>
 
           <!-- Durée d'Abonnement -->
           <div>
@@ -157,15 +166,43 @@
 </template>
 
 <script lang="ts">
-import { defineComponent} from 'vue'
+/*defineProps(
+    {
+      decoder:{
+        type: Decoder,
+        required:false,
+      }
+    }
+)*/
+import {defineComponent, ref} from 'vue'
 import mtnLogo from '../../../src/assets/images/mtn-logo.png'
 import orangeLogo from '../../../src/assets/images/orange-logo.png'
-import Subscriber from '../../../src/data/model/Subscriber'
+// import Decoder from '@/data/model/Decoder'
+// import Subscriber from "@/data/model/Subscriber";
+// import Shortlink from '@/data/model/Shortlink'
+
+import { useRoute } from 'vue-router';
+import createDecoderApiService from '@/services/decoderApiService'
+import createShortlinkApiService from '@/services/shortlinkApiService'
+
+
+const testDecoder = createDecoderApiService(
+    "drive.topupbackup.com",
+    "cee47ec8-4ae7-46dc-b131-dc00eb43d02e",
+    "eG2ZA4Jr#c}y(FED{N8_fS"
+);
+
+const testShortlink = createShortlinkApiService(
+    "drive.topupbackup.com",
+    "cee47ec8-4ae7-46dc-b131-dc00eb43d02e",
+    "eG2ZA4Jr#c}y(FED{N8_fS"
+);
 
 // Types pour les formules et opérateurs
 type Formula = string;
 type Bouquet = string;
 type MobileOperator = 'MTN' | 'Orange' | null
+
 
 export default defineComponent({
   name: 'interface',
@@ -173,10 +210,11 @@ export default defineComponent({
     return {
       mtnLogo,
       orangeLogo,
+      isLoading : ref(false),
 
       // hidden id code
-      code: 0 as number,
-      token: '' as string,
+      merchant: null as number,
+      decoder: 0 as number,
 
       // Types dynamiques pour chaque propriété
       selectedFormula: '' as Formula,
@@ -297,47 +335,6 @@ export default defineComponent({
       }
     },
 
-    async fetchTokenAndDecoderDetails() {
-      try {
-
-        const urlParams = new URLSearchParams(window.location.search);
-        const token = urlParams.get('token');
-        console.log('Le token détecté est :', token);
-
-        const isValidToken = (value: string) => {
-          const jwtRegex = /^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$/;
-          return jwtRegex.test(value);
-        };
-
-        if (!token || !isValidToken(token)) {
-          throw new Error('Token invalide ou absent dans l\'URL');
-        }
-
-
-        const subscriber = new Subscriber(
-            0, // mobile (placeholder)
-            '', // name (will be populated)
-            '', // formula (will be populated)
-            null, // bouquet (will be populated)
-            new Date(), // expiry date (will be populated)
-            token
-        )
-
-        const detailsFetched = await subscriber.fetchDecoderDetails()
-
-        if (detailsFetched) {
-          this.token = token
-          this.code = subscriber.code || 0
-          this.decoderCode = subscriber.code?.toString() || ''
-          this.decoderFormula = subscriber.formula
-          this.subscriberName = subscriber.name
-          this.formattedExpiryDate = this.formatDate(subscriber.expiryDate)
-        }
-      } catch (error) {
-        console.error('Error fetching decoder details:', error)
-      }
-    },
-
     formatDate(date: Date): string {
       return date.toLocaleDateString('fr-FR', {
         day: '2-digit',
@@ -346,9 +343,180 @@ export default defineComponent({
       })
     }
   },
-  mounted() {
-    this.fetchTokenAndDecoderDetails()
+
+ props: {
+    shortlink: {
+      type: String,
+      default: null, // Utilisé si c'est un ID
+    },
+    decoder: {
+      type: Object,
+      default: null, // Utilisé si c'est un objet
+    },
+  },
+  setup() {
+    const route = useRoute();
+    return { route };
+  },
+
+
+  mounted: async function () {
+
+     this.isLoading = true;
+    const decoderFromRoute = this.route.query.decoder;
+
+
+    if (decoderFromRoute) {
+
+      const result = await testDecoder.decodeNumber(Number(decoderFromRoute));
+      console.log(result.finished)
+      if (result) {
+        this.decoderCode = result.device?.toString() || '';
+        this.decoderFormula = result.formula.name || '';
+        this.subscriberName = result.subscriber?.lastname && result.subscriber?.firstname ? `${result.subscriber?.lastname} ${result.subscriber?.firstname}` : '';
+        this.formattedExpiryDate = result.finished.toString();
+        // this.formattedExpiryDate = this.formatDate(result.finished || new Date());
+
+      }
+
+      this.isLoading = false
+    }
+
+
+    if (this.shortlink) {
+      console.log('le token est :', this.shortlink);
+      if(this.shortlink.length === 14){
+        const result = await testDecoder.decodeNumber(Number(this.shortlink));
+        console.log(result.finished)
+        if (result) {
+          this.decoderCode = result.device?.toString() || '';
+          this.decoderFormula = result.formula.name || '';
+          this.subscriberName = result.subscriber?.lastname && result.subscriber?.firstname ? `${result.subscriber?.lastname} ${result.subscriber?.firstname}` : '';
+          this.formattedExpiryDate = result.finished.toString();
+          // this.formattedExpiryDate = this.formatDate(result.finished || new Date());
+
+        }
+        this.isLoading = false
+      } else{
+        console.log('shorlink', this.shortlink);
+        const result = await testShortlink.getshortlink(this.shortlink);
+        console.log(result.merchant)
+        if (result) {
+          this.decoder = result.decoder.toString() || '';
+          this.merchant = result.merchant.toString() || '';
+          try {
+            const result = await testDecoder.decodeNumber(this.decoder);
+            console.log(result.finished)
+            if (result) {
+              this.decoderCode = result.device?.toString() || '';
+              this.decoderFormula = result.formula.name || '';
+              this.subscriberName = result.subscriber?.lastname && result.subscriber?.firstname ? `${result.subscriber?.lastname} ${result.subscriber?.firstname}` : '';
+              this.formattedExpiryDate = result.finished.toString();
+              // this.formattedExpiryDate = this.formatDate(result.finished || new Date());
+
+            }
+          } catch (error) {
+            throw new Error(error.toString())
+          }
+
+        }
+        this.isLoading = false
+      }
+      // try {
+      //   const shortlinkNew = new Shortlink(
+      //       this.shortlink,
+      //       0,
+      //       null,
+      //       ''
+      //   );
+      //
+      //   // Properly await the async method
+      //   // shortlinkNew.getshortlink().then(success => {
+      //   //   if (success) {
+      //   //
+      //   //     const subscriber = new Subscriber(
+      //   //         '', // firstname
+      //   //         '', // lastname
+      //   //         0   // mobile
+      //   //     );
+      //   //
+      //   //     const code = new Decoder(
+      //   //         0,
+      //   //         shortlinkNew.decoder,
+      //   //         subscriber,
+      //   //         null,
+      //   //         new Date()
+      //   //     );
+      //   //
+      //   //     // const fetchData = code.fetchDecoderDetails();
+      //   //     // if (fetchData) {
+      //   //     //   this.decoderCode = code.device?.toString() || '';
+      //   //     //   this.decoderFormula = code.formula || '';
+      //   //     //   this.subscriberName = code.subscriber?.firstname || '';
+      //   //     //   this.formattedExpiryDate = this.formatDate(code.finished || new Date());
+      //   //     // }
+      //   //   } else {
+      //   //     console.error('Failed to fetch shortlink');
+      //   //   }
+      //   // });
+      // } catch (error) {
+      //   console.error('Error processing token:', error);
+      //   // Consider showing user-friendly error message
+      // }
+    } else {
+      console.log('Nothing found');
+    }
   }
+
+  // mounted() {
+  //   if (this.shortlink) {
+  //     try {
+  //       const shortlink = new Shortlink(
+  //           this.token,
+  //           0,
+  //           null,
+  //           '',
+  //           )
+  //
+  //       const success = token.getshortlink()
+  //
+  //       if (success) {
+  //         // Afficher toutes les propriétés de l'abonné dans la console
+  //         console.log('Détails de l\'abonné:')
+  //         console.log('code', token.device)
+  //         console.log('marchand', token.merchant)
+  //
+  //         const code = new Decoder(
+  //             null,
+  //             token.device,
+  //             null,
+  //             null,
+  //             new Date()
+  //         )
+  //
+  //         const fecthData =  code.fetchDecoderDetails()
+  //         if(fecthData){
+  //           this.decoderCode = code.device?.toString() || ''
+  //           this.decoderFormula = code.formula
+  //           this.subscriberName = code.subscriber.firsname
+  //           this.formattedExpiryDate = this.formatDate(code.finished)
+  //         }
+  //       } else {
+  //         console.log('Aucun décodeur trouvé avec ce numéro');
+  //         throw new Error('Aucun décodeur trouvé avec ce numéro');
+  //       }
+  //     } catch (error) {
+  //       console.error('Error fetching device details:', error)
+  //     }
+  //     console.log('Token reçu :', this.token);
+  //
+  //   } else if (this.device) {
+  //     console.log('Objet device reçu :', this.device);
+  //     // Traitez l'objet
+  //   } else {
+  //     console.log('Aucun paramètre fourni.');
+  //   }
+  // }
 })
 </script>
 

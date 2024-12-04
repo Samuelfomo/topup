@@ -1,23 +1,28 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router';
 import Subscriber from "../../public/subscriber/views/subscriber.vue";
-import Home from "../../public/subscriber/views/home.vue"
+import Home from "../../public/subscriber/views/home.vue";
 
 const routes = [
+
     {
         path: '/',
-        name: 'Home',
+        name: 'home',
         component: Home
-    },
+},
     {
-        path: '/subscriber',
+        path: '/:shortlink?',
         name: 'Subscriber',
-        component: Subscriber
-    }
-]
+        component: Subscriber,
+        props: true,
+
+    },
+
+
+];
 
 const router = createRouter({
     history: createWebHistory(),
-    routes
-})
+    routes,
+});
 
-export default router
+export default router;

@@ -5,9 +5,9 @@ import { resolve } from 'path'
 
 export default defineConfig({
   plugins: [vue()],
-  build: {
-    target: 'es2015'
-  },
+  // build: {
+  //   target: 'es2015'
+  // },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
