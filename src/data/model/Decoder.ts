@@ -1,5 +1,5 @@
-import Formula from "@/data/model/Formula";
-import Subscriber from "@/data/model/Subscriber";
+import Formula from "./Formula";
+import Subscriber from "./Subscriber";
 
 class Decoder {
     public merchant?: number;

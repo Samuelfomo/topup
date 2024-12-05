@@ -47,9 +47,9 @@
 
 <script setup>
 import { ref } from 'vue'
-import Decoder from '@/data/model/Decoder'
-import Subscriber from '@/data/model/Subscriber'
-import Formula from '@/data/model/Formula'
+// import Decoder from '@/data/model/Decoder'
+// import Subscriber from '@/data/model/Subscriber'
+// import Formula from '@/data/model/Formula'
 import topup from '../../../src/assets/images/topup_logo.svg'
 import createDecoderApiService from '@/services/decoderApiService'
 
@@ -58,7 +58,7 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 
 
-const decoder = ref<Decoder>('');
+// const decoder = ref<Decoder>('');
 const decoderNumber = ref('');
 const isLoading = ref(false)
 
@@ -66,18 +66,17 @@ const searchDecoder = async () => {
   isLoading.value = true
 
   try {
-    const subscriber = new Subscriber(
-        '',
-        '',
-        0,
-    );
-
-    const formula = new Formula(
-        '', // name
-        '', // formula
-        0    // amount
-    );
-
+    // const subscriber = new Subscriber(
+    //     '',
+    //     '',
+    //     0,
+    // );
+    //
+    // const formula = new Formula(
+    //     '', // name
+    //     '', // formula
+    //     0    // amount
+    // );
     //  decoder = new Decoder(
     //     0,
     //     parseInt(decoderNumber.value),
@@ -89,7 +88,7 @@ const searchDecoder = async () => {
     const testDecoder = createDecoderApiService();
     const result =  await testDecoder.decodeNumber( parseInt(decoderNumber.value));
 
-    router.push({
+    await router.push({
       name: 'Subscriber',
       query: { decoder: result.device.toString()  }
       // query: { decoder: JSON.stringify(result)   }
@@ -97,7 +96,6 @@ const searchDecoder = async () => {
 
       // Pass credentials securely (ideally from environment variables)
    // await device.fetchDecoderDetails();
-
     // Rest of the code remains the same...
   } catch (error) {
     console.error('Erreur lors de la recherche:', error);

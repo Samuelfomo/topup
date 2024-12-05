@@ -13,6 +13,17 @@ const createShortlinkApiService = (
     password: 'eG2ZA4Jr#c}y(FED{N8_fS'
 ): ShortlinkApiService => {
 
+    const apiClient: AxiosInstance = axios.create({
+        baseURL: `https://${endpoint}/search/decoder/number/`,
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        auth: {
+            username,
+            password,
+        },
+    });
+
     return {
         /**
          * 23800456666977
