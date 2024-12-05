@@ -51,7 +51,7 @@ import { ref } from 'vue'
 // import Subscriber from '@/data/model/Subscriber'
 // import Formula from '@/data/model/Formula'
 import topup from '../../../src/assets/images/topup_logo.svg'
-import createDecoderApiService from '@/services/decoderApiService'
+import createDecoderApiService from '@/decoder/service/decoderApiService'
 
 import { useRouter } from 'vue-router';
 

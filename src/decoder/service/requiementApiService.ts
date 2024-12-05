@@ -1,4 +1,4 @@
-import Requiement from "../data/model/Requiement";
+import Requiement from "../class/Requiement";
 import axios, {AxiosInstance} from "axios";
 
 interface DecoderApiService {

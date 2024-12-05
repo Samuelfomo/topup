@@ -223,11 +223,11 @@ import orangeLogo from '../../../src/assets/images/orange-logo.png'
 
 
 import { useRoute } from 'vue-router';
-import createDecoderApiService from '@/services/decoderApiService'
-import createShortlinkApiService from '@/services/shortlinkApiService'
-import createRequiementApiService from '@/services/requiementApiService'
+import createDecoderApiService from '@/decoder/service/decoderApiService'
+import createShortlinkApiService from '@/decoder/service/shortlinkApiService'
+import createRequiementApiService from '@/decoder/service/requiementApiService'
 
-import PreSubscription from '@/data/model/PreSubscription'
+import PreSubscription from '@/decoder/class/PreSubscription'
 
 
 const testDecoder = createDecoderApiService(
