@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SshConfigs">
+    <configs>
+      <sshConfig authType="PASSWORD" host="66.179.251.205" id="602b2476-d86e-44d8-bd29-22690306b0c4" port="22" nameFormat="DESCRIPTIVE" username="topupdrive" useOpenSSHConfig="true" />
+    </configs>
+  </component>
+</project>

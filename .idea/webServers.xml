@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="0cc0d165-0952-47cf-b44c-46921147b25f" name="topup-view">
+        <fileTransfer rootFolder="/d.topup.cm" accessType="SFTP" host="66.179.251.205" port="22" sshConfigId="602b2476-d86e-44d8-bd29-22690306b0c4" sshConfig="topupdrive@66.179.251.205:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+      <webServer id="07ee2810-0b13-4314-aabd-5675ace4ad93" name="subscriber">
+        <fileTransfer rootFolder="/var/www/html/public/subscriber" accessType="SFTP" host="192.168.100.103" port="22" sshConfigId="2da1a2e8-fb3e-42b4-b14c-5d49827afa99" sshConfig="whatsapp@192.168.100.103:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
