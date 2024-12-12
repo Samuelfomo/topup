@@ -13,12 +13,12 @@ const createDecoderApiService = (): DecoderApiService => {
     async decodeNumber(decoder: number) {
       try {
         console.log(decoder);
-        const response = await fetch(`http://localhost:5000/decoder/`, {
-          method: 'POST',
+        const response = await fetch(`http://localhost:5000/decoder/${decoder}`, {
+          method: 'GET',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ decoder: decoder }),
+          // body: JSON.stringify({ decoder: decoder }),
         });
 
         if (!response.ok) {

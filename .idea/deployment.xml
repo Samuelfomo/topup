@@ -3,6 +3,13 @@
   <component name="PublishConfigData" autoUpload="On explicit save action" serverName="topup-view" deleteMissingItems="true" confirmBeforeDeletion="false" autoUploadExternalChanges="true">
     <option name="confirmBeforeDeletion" value="false" />
     <serverData>
+      <paths name="subscriber">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
       <paths name="topup-view">
         <serverdata>
           <mappings>

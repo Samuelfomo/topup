@@ -10,7 +10,7 @@
         </fileTransfer>
       </webServer>
       <webServer id="07ee2810-0b13-4314-aabd-5675ace4ad93" name="subscriber">
-        <fileTransfer rootFolder="/var/www/html/public/subscriber" accessType="SFTP" host="192.168.100.103" port="22" sshConfigId="2da1a2e8-fb3e-42b4-b14c-5d49827afa99" sshConfig="whatsapp@192.168.100.103:22 password">
+        <fileTransfer rootFolder="/var/www/html/public/interface" accessType="SFTP" host="192.168.100.103" port="22" sshConfigId="2da1a2e8-fb3e-42b4-b14c-5d49827afa99" sshConfig="whatsapp@192.168.100.103:22 password">
           <advancedOptions>
             <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
           </advancedOptions>
